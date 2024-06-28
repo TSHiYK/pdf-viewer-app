@@ -34,6 +34,12 @@ export class DocumentListComponent implements OnInit {
     });
   }
 
+  onSearch(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const query = input.value.toLowerCase();
+    this.filteredDocuments = this.documents.filter(doc => doc.name.toLowerCase().includes(query));
+  }
+
   onFileUploaded(url: string) {
     console.log('File uploaded successfully:', url);
     this.loadDocuments(); // ドキュメントリストを更新

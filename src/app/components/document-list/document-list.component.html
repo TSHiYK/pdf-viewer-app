@@ -1,5 +1,6 @@
 <div class="document-list">
   <h2>Documents</h2>
+  <input type="text" placeholder="Search documents..." (input)="onSearch($event)" />
   <app-upload (fileUploaded)="onFileUploaded($event)" (fileSelected)="onFileSelected($event)"></app-upload>
   <div class="card-container">
     <div *ngFor="let doc of filteredDocuments" class="document-card">
