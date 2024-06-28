@@ -6,11 +6,13 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "test": "ng test",
     "serve:ssr:pdf-viewer-app": "node dist/pdf-viewer-app/server/server.mjs"
   },
   "private": true,
   "dependencies": {
+    "@adobe/spectrum-css": "^3.0.0",
     "@angular/animations": "^18.0.5",
     "@angular/cdk": "^18.0.5",
     "@angular/common": "^18.0.5",

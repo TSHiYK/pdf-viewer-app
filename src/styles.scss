@@ -1,1 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+    @extend .spectrum !optional;
+    @extend .spectrum--light !optional;
+    @extend .spectrum--medium !optional;
+
+    font-family: var(--spectrum-font-family-base);
+    font-size: var(--spectrum-font-size-100);
+    font-weight: var(--spectrum-font-weight-regular);
+    line-height: var(--spectrum-line-height-100);
+    color: var(--spectrum-neutral-content-color-default);
+    background-color: var(--spectrum-global-color-gray-100);
+}
