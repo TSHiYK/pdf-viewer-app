@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, addDoc, Timestamp } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, Timestamp } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -20,5 +20,10 @@ export class DocumentService {
       uploadDate: Timestamp.fromDate(document.uploadDate)
     };
     return addDoc(pdfsCollection, documentWithDate);
+  }
+
+  deleteDocument(docId: string) {
+    const documentRef = doc(this.firestore, `pdfs/${docId}`);
+    return deleteDoc(documentRef);
   }
 }

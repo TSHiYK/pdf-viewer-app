@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Observable } from 'rxjs';
 import { FirebaseApp } from '@angular/fire/app';
 
@@ -33,6 +33,18 @@ export class StorageService {
           });
         }
       );
+    });
+  }
+
+  deleteFile(fileUrl: string): Observable<void> {
+    const fileRef = ref(this.storage, fileUrl);
+    return new Observable(observer => {
+      deleteObject(fileRef).then(() => {
+        observer.next();
+        observer.complete();
+      }).catch(error => {
+        observer.error(error);
+      });
     });
   }
 }

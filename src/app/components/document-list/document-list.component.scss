@@ -41,3 +41,17 @@
   color: #666666;
   font-size: 0.9em;
 }
+
+button {
+  background-color: #FF6347;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #FF4500;
+}
