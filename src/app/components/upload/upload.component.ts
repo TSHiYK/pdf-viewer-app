@@ -50,9 +50,14 @@ export class UploadComponent {
               size: fileSize,
               uploadDate: new Date()
             };
-            this.documentService.addDocument(document).then(() => {
-              this.fileUploaded.emit(progressOrUrl);
-              this.selectedFile = null;
+            this.documentService.addDocument(document).subscribe({
+              next: () => {
+                this.fileUploaded.emit(progressOrUrl);
+                this.selectedFile = null;
+              },
+              error: error => {
+                console.error('Failed to save document metadata', error);
+              }
             });
           }
         },

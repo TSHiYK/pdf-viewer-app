@@ -2,11 +2,13 @@ import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DocumentService } from '../../services/document.service';
 import { StorageService } from '../../services/storage.service';
+import { UploadComponent } from '../upload/upload.component';
+import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
 
 @Component({
   selector: 'app-document-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UploadComponent, SafeUrlPipe],
   templateUrl: './document-list.component.html',
   styleUrls: ['./document-list.component.scss']
 })
@@ -14,6 +16,7 @@ export class DocumentListComponent implements OnInit {
   documents: any[] = [];
   filteredDocuments: any[] = [];
   @Output() documentSelected = new EventEmitter<string>();
+  selectedDocumentUrl: string | null = null;
 
   constructor(
     private documentService: DocumentService,
@@ -31,20 +34,17 @@ export class DocumentListComponent implements OnInit {
     });
   }
 
-  onSearch(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const searchTerm = target.value.toLowerCase();
+  onFileUploaded(url: string) {
+    console.log('File uploaded successfully:', url);
+    this.loadDocuments(); // ドキュメントリストを更新
+  }
 
-    if (searchTerm) {
-      this.filteredDocuments = this.documents.filter(doc =>
-        doc.name.toLowerCase().includes(searchTerm)
-      );
-    } else {
-      this.filteredDocuments = this.documents;
-    }
+  onFileSelected(url: string) {
+    this.selectedDocumentUrl = url; // ファイル選択時にURLを設定
   }
 
   onSelectDocument(url: string) {
+    this.selectedDocumentUrl = url; // ドキュメントを選択して表示
     this.documentSelected.emit(url);
   }
 
@@ -53,9 +53,14 @@ export class DocumentListComponent implements OnInit {
     if (doc) {
       this.storageService.deleteFile(doc.fileUrl).subscribe({
         next: () => {
-          this.documentService.deleteDocument(docId).then(() => {
-            this.documents = this.documents.filter(d => d.id !== docId);
-            this.filteredDocuments = this.filteredDocuments.filter(d => d.id !== docId);
+          this.documentService.deleteDocument(docId).subscribe({
+            next: () => {
+              this.documents = this.documents.filter(d => d.id !== docId);
+              this.filteredDocuments = this.filteredDocuments.filter(d => d.id !== docId);
+            },
+            error: (error) => {
+              console.error('Delete failed', error);
+            }
           });
         },
         error: (error) => {
