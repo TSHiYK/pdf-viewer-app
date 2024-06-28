@@ -4,6 +4,8 @@ import { DocumentService } from '../../services/document.service';
 import { StorageService } from '../../services/storage.service';
 import { UploadComponent } from '../upload/upload.component';
 import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-document-list',
@@ -34,10 +36,16 @@ export class DocumentListComponent implements OnInit {
     });
   }
 
+  // OR検索および部分検索を実行します。
+  // ドキュメントの名前またはタグのいずれかに検索クエリが含まれている場合に一致とみなします。
+  // 完全一致検索ではありません。
   onSearch(event: Event) {
     const input = event.target as HTMLInputElement;
     const query = input.value.toLowerCase();
-    this.filteredDocuments = this.documents.filter(doc => doc.name.toLowerCase().includes(query));
+    this.filteredDocuments = this.documents.filter(doc =>
+      doc.name.toLowerCase().includes(query) ||
+      (doc.tags && doc.tags.some((tag: string) => tag.toLowerCase().includes(query)))
+    );
   }
 
   onFileUploaded(url: string) {
@@ -52,6 +60,17 @@ export class DocumentListComponent implements OnInit {
   onSelectDocument(url: string) {
     this.selectedDocumentUrl = url; // ドキュメントを選択して表示
     this.documentSelected.emit(url);
+  }
+
+  onShareDocument(docId: string, sharedWithUid: string) {
+    this.documentService.shareDocument(docId, sharedWithUid).subscribe({
+      next: () => {
+        console.log('Document shared successfully');
+      },
+      error: error => {
+        console.error('Failed to share document', error);
+      }
+    });
   }
 
   onDeleteDocument(docId: string) {
@@ -74,5 +93,29 @@ export class DocumentListComponent implements OnInit {
         }
       });
     }
+  }
+
+  onAddTag(docId: string, tag: string) {
+    this.documentService.addTag(docId, tag).subscribe({
+      next: () => {
+        console.log('Tag added successfully');
+        this.loadDocuments(); // 更新後のドキュメントリストを再読み込み
+      },
+      error: error => {
+        console.error('Failed to add tag', error);
+      }
+    });
+  }
+
+  onRemoveTag(docId: string, tag: string) {
+    this.documentService.removeTag(docId, tag).subscribe({
+      next: () => {
+        console.log('Tag removed successfully');
+        this.loadDocuments(); // 更新後のドキュメントリストを再読み込み
+      },
+      error: error => {
+        console.error('Failed to remove tag', error);
+      }
+    });
   }
 }
