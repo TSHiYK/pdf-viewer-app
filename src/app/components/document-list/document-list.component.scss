@@ -4,6 +4,14 @@
   gap: 20px;
 }
 
+.document-list input[type="text"] {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #DDD;
+  font-size: 1em;
+  margin-bottom: 20px;
+}
+
 .card-container {
   display: flex;
   flex-wrap: wrap;

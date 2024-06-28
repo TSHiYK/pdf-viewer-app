@@ -12,6 +12,7 @@ import { StorageService } from '../../services/storage.service';
 })
 export class DocumentListComponent implements OnInit {
   documents: any[] = [];
+  filteredDocuments: any[] = [];
   @Output() documentSelected = new EventEmitter<string>();
 
   constructor(
@@ -26,7 +27,21 @@ export class DocumentListComponent implements OnInit {
   loadDocuments() {
     this.documentService.getDocuments().subscribe(docs => {
       this.documents = docs;
+      this.filteredDocuments = docs; // 初期状態では全てのドキュメントを表示
     });
+  }
+
+  onSearch(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const searchTerm = target.value.toLowerCase();
+
+    if (searchTerm) {
+      this.filteredDocuments = this.documents.filter(doc =>
+        doc.name.toLowerCase().includes(searchTerm)
+      );
+    } else {
+      this.filteredDocuments = this.documents;
+    }
   }
 
   onSelectDocument(url: string) {
@@ -40,6 +55,7 @@ export class DocumentListComponent implements OnInit {
         next: () => {
           this.documentService.deleteDocument(docId).then(() => {
             this.documents = this.documents.filter(d => d.id !== docId);
+            this.filteredDocuments = this.filteredDocuments.filter(d => d.id !== docId);
           });
         },
         error: (error) => {
