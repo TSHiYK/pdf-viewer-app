@@ -1,18 +1,7 @@
-.spectrum-App {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: var(--spectrum-global-color-gray-100);
-}
-
-.spectrum-AppHeader {
-  background-color: var(--spectrum-global-color-gray-200);
-  padding: var(--spectrum-global-dimension-size-200) var(--spectrum-global-dimension-size-300);
-  border-bottom: 1px solid var(--spectrum-global-color-gray-300);
-}
-
-.spectrum-App-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--spectrum-global-dimension-size-200);
+.document-viewer {
+  width: 100%;
+  height: 500px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

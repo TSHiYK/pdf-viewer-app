@@ -1,9 +1,8 @@
 import { Routes } from '@angular/router';
+import { AppComponent } from './app.component';
 
 export const routes: Routes = [
-    {
-        path: 'pdf-viewer',
-        loadComponent: () => import('./pdf-viewer/pdf-viewer.component').then(m => m.PdfViewerComponent)
-    },
-    { path: '', redirectTo: '/pdf-viewer', pathMatch: 'full' }
+    { path: '', component: AppComponent },
+    // ここに他のルートを追加できます
+    // { path: 'another', component: AnotherComponent },
 ];

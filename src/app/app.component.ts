@@ -1,20 +1,33 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { UploadComponent } from './components/upload/upload.component';
+import { DocumentListComponent } from './components/document-list/document-list.component';
+import { SafeUrlPipe } from './pipes/safe-url.pipe';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [CommonModule, UploadComponent, DocumentListComponent, SafeUrlPipe],
   template: `
-    <div class="spectrum-App">
-      <header class="spectrum-AppHeader">
-        <h1 class="spectrum-Heading spectrum-Heading--sizeXXL">PDF Viewer App</h1>
-      </header>
-      <main class="spectrum-App-content">
-        <router-outlet></router-outlet>
-      </main>
-    </div>
+    <app-upload (fileUploaded)="onFileUploaded($event)" (fileSelected)="onFileSelected($event)"></app-upload>
+    <app-document-list #docList (documentSelected)="onDocumentSelected($event)"></app-document-list>
+    <iframe *ngIf="selectedDocumentUrl" [src]="selectedDocumentUrl | safeUrl" width="100%" height="500px"></iframe>
   `,
-  styleUrls: ['./app.component.scss']
 })
-export class AppComponent { }
+export class AppComponent {
+  selectedDocumentUrl: string | null = null;
+  @ViewChild('docList') documentListComponent!: DocumentListComponent;
+
+  onFileUploaded(url: string) {
+    console.log('File uploaded successfully:', url);
+    this.documentListComponent.loadDocuments(); // ドキュメントリストを更新
+  }
+
+  onFileSelected(url: string) {
+    this.selectedDocumentUrl = url; // ファイル選択時にURLを設定
+  }
+
+  onDocumentSelected(url: string) {
+    this.selectedDocumentUrl = url; // ドキュメントを選択して表示
+  }
+}

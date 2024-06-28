@@ -1,0 +1,12 @@
+<div class="document-list">
+  <h2>Documents</h2>
+  <div class="card-container">
+    <div *ngFor="let doc of documents" (click)="onSelectDocument(doc.fileUrl)" class="document-card">
+      <div class="card-content">
+        <h3>{{ doc.name }}</h3>
+        <p>Size: {{ (doc.size / 1024 / 1024) | number: '1.2-2' }} MB</p>
+        <p>Uploaded on: {{ doc.uploadDate.toDate() | date }}</p>
+      </div>
+    </div>
+  </div>
+</div>
