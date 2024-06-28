@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, authState, User } from '@angular/fire/auth';
-import { Firestore, collection, addDoc, getDocs, query, where } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, getDocs, query, where, collection } from '@angular/fire/firestore';
 import { from, Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -31,7 +31,8 @@ export class AuthService {
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
 
-      await addDoc(userCollection, {
+      const userDocRef = doc(this.firestore, `users/${user.uid}`);
+      await setDoc(userDocRef, {
         uid: user.uid,
         email: user.email,
         role: role,

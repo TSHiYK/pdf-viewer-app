@@ -1,1 +1,10 @@
+<nav>
+  <ul>
+    <li><a routerLink="/documents">Documents</a></li>
+    <li><a routerLink="/sign-in">Sign In</a></li>
+    <li><a routerLink="/sign-up">Sign Up</a></li>
+    <li *ngIf="isAdmin"><a routerLink="/admin/users">User List</a></li> <!-- 管理者用リンク -->
+    <li><a (click)="signOut()">Sign Out</a></li>
+  </ul>
+</nav>
 <router-outlet></router-outlet>

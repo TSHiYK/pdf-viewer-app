@@ -1,0 +1,11 @@
+<div *ngIf="users$ | async as users">
+  <h2>Users in Your Organization</h2>
+  <ul>
+    <li *ngFor="let user of users">
+      {{ user.email }} - Role: {{ user.role }}
+    </li>
+  </ul>
+</div>
+<div *ngIf="(users$ | async)?.length === 0">
+  No users found in your organization.
+</div>
