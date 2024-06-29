@@ -1,32 +1,60 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { DocumentService } from '../../services/document.service';
 import { StorageService } from '../../services/storage.service';
 import { UploadComponent } from '../upload/upload.component';
 import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
 import { ToastService } from '../../services/toast.service';
-
+import { DocumentOverlayComponent } from '../document-overlay/document-overlay.component';
+import { DocumentViewerComponent } from '../document-viewer/document-viewer.component';
 @Component({
   selector: 'app-document-list',
   standalone: true,
-  imports: [CommonModule, UploadComponent, SafeUrlPipe],
+  imports: [
+    CommonModule,
+    UploadComponent,
+    SafeUrlPipe,
+    DocumentOverlayComponent,
+    DocumentViewerComponent
+  ],
   templateUrl: './document-list.component.html',
   styleUrls: ['./document-list.component.scss']
 })
 export class DocumentListComponent implements OnInit {
+
+  @Output() documentSelected = new EventEmitter<string>();
+
   documents: any[] = [];
   filteredDocuments: any[] = [];
-  @Output() documentSelected = new EventEmitter<string>();
   selectedDocumentUrl: string | null = null;
+  layoutMode: 'overlay' | 'split' = 'overlay';
+  isLargeScreen = false;
 
   constructor(
     private documentService: DocumentService,
     private storageService: StorageService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private breakpointObserver: BreakpointObserver
   ) { }
 
   ngOnInit() {
     this.loadDocuments();
+    this.observeScreenSize();
+  }
+
+  observeScreenSize() {
+    this.breakpointObserver.observe([Breakpoints.Large, Breakpoints.XLarge])
+      .subscribe(result => {
+        this.isLargeScreen = result.matches;
+        this.layoutMode = this.isLargeScreen ? 'split' : 'overlay';
+      });
+  }
+
+  toggleLayoutMode() {
+    if (this.isLargeScreen) {
+      this.layoutMode = this.layoutMode === 'overlay' ? 'split' : 'overlay';
+    }
   }
 
   loadDocuments() {
