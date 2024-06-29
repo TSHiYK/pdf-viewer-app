@@ -30,10 +30,16 @@ export class DocumentListComponent implements OnInit {
   }
 
   loadDocuments() {
-    this.documentService.getDocuments().subscribe(docs => {
-      this.documents = docs;
-      this.filteredDocuments = docs; // 初期状態では全てのドキュメントを表示
-    });
+    this.documentService.getDocuments().subscribe(
+      docs => {
+        console.log('Received documents:', docs); // デバッグ: 受け取ったドキュメントをログ出力
+        this.documents = docs;
+        this.filteredDocuments = docs;
+      },
+      error => {
+        console.error('Error loading documents:', error); // デバッグ: エラーをログ出力
+      }
+    );
   }
 
   // OR検索および部分検索を実行します。
@@ -99,10 +105,26 @@ export class DocumentListComponent implements OnInit {
     this.documentService.addTag(docId, tag).subscribe({
       next: () => {
         console.log('Tag added successfully');
-        this.loadDocuments(); // 更新後のドキュメントリストを再読み込み
+        // ローカルで該当ドキュメントを更新
+        const docIndex = this.documents.findIndex(doc => doc.id === docId);
+        if (docIndex !== -1) {
+          if (!this.documents[docIndex].tags) {
+            this.documents[docIndex].tags = [];
+          }
+          this.documents[docIndex].tags.push(tag);
+          // filteredDocuments も更新
+          const filteredIndex = this.filteredDocuments.findIndex(doc => doc.id === docId);
+          if (filteredIndex !== -1) {
+            this.filteredDocuments[filteredIndex] = { ...this.documents[docIndex] };
+          }
+        }
+        // 必要に応じて全ドキュメントを再読み込み
+        this.loadDocuments();
       },
       error: error => {
         console.error('Failed to add tag', error);
+        // ユーザーにエラーメッセージを表示
+        this.showErrorMessage('Failed to add tag: ' + error.message);
       }
     });
   }
@@ -117,5 +139,11 @@ export class DocumentListComponent implements OnInit {
         console.error('Failed to remove tag', error);
       }
     });
+  }
+
+  private showErrorMessage(message: string) {
+    // TODO: エラーメッセージをユーザーに表示する実装
+    // 例: アラート、トースト通知、エラーバナーなど
+    console.error(message);
   }
 }

@@ -1,0 +1,17 @@
+<header>
+    <nav>
+        <ul>
+            <li><a routerLink="/documents">Documents</a></li>
+            <ng-container *ngIf="currentUser$ | async as user; else unauthenticatedLinks">
+            <li><a routerLink="/edit-profile">Edit Profile</a></li>
+            <li *ngIf="isAdmin$ | async"><a routerLink="/admin/users">User List</a></li>
+            <li><a (click)="signOut()">Sign Out</a></li>
+            <li><span>Welcome, {{ user.displayName || user.email }}</span></li>
+            </ng-container>
+            <ng-template #unauthenticatedLinks>
+            <li><a routerLink="/sign-in">Sign In</a></li>
+            <li><a routerLink="/sign-up">Sign Up</a></li>
+            </ng-template>
+        </ul>
+    </nav>
+</header>

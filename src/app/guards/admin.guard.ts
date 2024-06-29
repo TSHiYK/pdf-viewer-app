@@ -4,7 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { map, take, switchMap } from 'rxjs/operators';
 import { Observable, of, from } from 'rxjs';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
-import { User } from '@angular/fire/auth';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +21,8 @@ export class AdminGuard implements CanActivate {
           const userDocRef = doc(this.firestore, `users/${user.uid}`);
           return from(getDoc(userDocRef)).pipe(
             map(docSnapshot => {
-              const userData = docSnapshot.data();
-              if (userData && userData['role'] === 'admin') {
+              const userData = docSnapshot.data() as User | undefined;
+              if (userData && userData.role === 'admin') {
                 return true;
               } else {
                 this.router.navigate(['/']);

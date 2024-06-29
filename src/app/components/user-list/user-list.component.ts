@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { Firestore, collectionData, collection, query, where, doc, getDoc } from '@angular/fire/firestore';
 import { Observable, of, from } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-user-list',
@@ -13,7 +14,7 @@ import { switchMap, map } from 'rxjs/operators';
   imports: [CommonModule]
 })
 export class UserListComponent implements OnInit {
-  users$: Observable<any[]> = of([]); // 初期化
+  users$: Observable<User[]> = of([]); // 初期化
 
   constructor(private firestore: Firestore, private authService: AuthService) { }
 
@@ -29,14 +30,25 @@ export class UserListComponent implements OnInit {
             if (!userDoc.exists()) {
               return of([]);
             }
-            const userData = userDoc.data();
-            const organizationId = userData['organizationId'];
+            const userData = userDoc.data() as User;
+            const organizationId = userData.organizationId;
             const usersCollection = collection(this.firestore, 'users');
             const q = query(usersCollection, where('organizationId', '==', organizationId));
-            return collectionData(q, { idField: 'id' });
+            return collectionData(q, { idField: 'id' }) as Observable<User[]>;
           })
         );
       })
+    );
+  }
+
+  updateUserRole(userId: string, newRole: 'user' | 'admin'): void {
+    this.authService.updateUserProfile({ role: newRole }).subscribe(
+      () => {
+        console.log(`User ${userId} role updated to ${newRole}`);
+      },
+      error => {
+        console.error('Error updating user role:', error);
+      }
     );
   }
 }

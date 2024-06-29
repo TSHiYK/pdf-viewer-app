@@ -1,0 +1,22 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="displayName">Display Name:</label>
+    <input id="displayName" type="text" formControlName="displayName">
+  </div>
+  <div>
+    <label for="email">Email:</label>
+    <input id="email" type="email" formControlName="email">
+  </div>
+  <div>
+    <label for="password">New Password (leave blank to keep current):</label>
+    <input id="password" type="password" formControlName="password">
+  </div>
+  <div *ngIf="(currentUser$ | async)?.role === 'admin'">
+    <label for="role">Role:</label>
+    <select id="role" formControlName="role">
+      <option value="user">User</option>
+      <option value="admin">Admin</option>
+    </select>
+  </div>
+  <button type="submit" [disabled]="!userForm.valid">Update Profile</button>
+</form>
