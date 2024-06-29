@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { User } from '../../models/user.model';
 import { CommonModule } from '@angular/common';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-user-edit',
@@ -18,7 +19,8 @@ export class UserEditComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService
   ) {
     this.userForm = this.fb.group({
       displayName: ['', Validators.required],
@@ -47,11 +49,21 @@ export class UserEditComponent implements OnInit {
       this.authService.updateUserProfile(userData).subscribe(
         () => {
           console.log('User profile updated successfully');
+          this.showSuccessMessage('User profile updated successfully');
         },
         error => {
           console.error('Error updating user profile:', error);
+          this.showErrorMessage('Error updating user profile: ' + error.message);
         }
       );
     }
+  }
+
+  private showSuccessMessage(message: string) {
+    this.toastService.show(message, 'success');
+  }
+
+  private showErrorMessage(message: string) {
+    this.toastService.show(message, 'error');
   }
 }

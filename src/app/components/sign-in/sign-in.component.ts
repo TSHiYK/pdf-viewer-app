@@ -3,6 +3,7 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-sign-in',
@@ -15,7 +16,11 @@ export class SignInComponent {
   email: string = '';
   password: string = '';
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private toastService: ToastService
+  ) { }
 
   signIn(event: Event) {
     event.preventDefault();
@@ -26,7 +31,12 @@ export class SignInComponent {
       },
       error: (error) => {
         console.error('Sign in error', error);
+        this.showErrorMessage('Sign in error: ' + error.message);
       }
     });
+  }
+
+  private showErrorMessage(message: string) {
+    this.toastService.show(message, 'error');
   }
 }

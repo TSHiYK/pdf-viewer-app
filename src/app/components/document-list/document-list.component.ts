@@ -4,8 +4,7 @@ import { DocumentService } from '../../services/document.service';
 import { StorageService } from '../../services/storage.service';
 import { UploadComponent } from '../upload/upload.component';
 import { SafeUrlPipe } from '../../pipes/safe-url.pipe';
-import { combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-document-list',
@@ -22,7 +21,8 @@ export class DocumentListComponent implements OnInit {
 
   constructor(
     private documentService: DocumentService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit() {
@@ -37,7 +37,7 @@ export class DocumentListComponent implements OnInit {
         this.filteredDocuments = docs;
       },
       error => {
-        console.error('Error loading documents:', error); // デバッグ: エラーをログ出力
+        this.showErrorMessage('Error loading documents: ' + error.message);
       }
     );
   }
@@ -55,7 +55,7 @@ export class DocumentListComponent implements OnInit {
   }
 
   onFileUploaded(url: string) {
-    console.log('File uploaded successfully:', url);
+    this.showSuccessMessage('File uploaded successfully: ' + url);
     this.loadDocuments(); // ドキュメントリストを更新
   }
 
@@ -71,10 +71,10 @@ export class DocumentListComponent implements OnInit {
   onShareDocument(docId: string, sharedWithUid: string) {
     this.documentService.shareDocument(docId, sharedWithUid).subscribe({
       next: () => {
-        console.log('Document shared successfully');
+        this.showSuccessMessage('Document shared successfully');
       },
       error: error => {
-        console.error('Failed to share document', error);
+        this.showErrorMessage('Failed to share document: ' + error.message);
       }
     });
   }
@@ -90,12 +90,12 @@ export class DocumentListComponent implements OnInit {
               this.filteredDocuments = this.filteredDocuments.filter(d => d.id !== docId);
             },
             error: (error) => {
-              console.error('Delete failed', error);
+              this.showErrorMessage('Delete failed: ' + error.message);
             }
           });
         },
         error: (error) => {
-          console.error('Delete failed', error);
+          this.showErrorMessage('Delete failed: ' + error.message);
         }
       });
     }
@@ -122,8 +122,6 @@ export class DocumentListComponent implements OnInit {
         this.loadDocuments();
       },
       error: error => {
-        console.error('Failed to add tag', error);
-        // ユーザーにエラーメッセージを表示
         this.showErrorMessage('Failed to add tag: ' + error.message);
       }
     });
@@ -136,14 +134,16 @@ export class DocumentListComponent implements OnInit {
         this.loadDocuments(); // 更新後のドキュメントリストを再読み込み
       },
       error: error => {
-        console.error('Failed to remove tag', error);
+        this.showErrorMessage('Failed to remove tag: ' + error.message);
       }
     });
   }
 
+  private showSuccessMessage(message: string) {
+    this.toastService.show(message, 'success');
+  }
+
   private showErrorMessage(message: string) {
-    // TODO: エラーメッセージをユーザーに表示する実装
-    // 例: アラート、トースト通知、エラーバナーなど
-    console.error(message);
+    this.toastService.show(message, 'error');
   }
 }

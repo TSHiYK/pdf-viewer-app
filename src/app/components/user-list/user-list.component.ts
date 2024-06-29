@@ -5,6 +5,7 @@ import { Firestore, collectionData, collection, query, where, doc, getDoc } from
 import { Observable, of, from } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { User } from '../../models/user.model';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-user-list',
@@ -16,7 +17,11 @@ import { User } from '../../models/user.model';
 export class UserListComponent implements OnInit {
   users$: Observable<User[]> = of([]); // 初期化
 
-  constructor(private firestore: Firestore, private authService: AuthService) { }
+  constructor(
+    private firestore: Firestore,
+    private authService: AuthService,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
     this.users$ = this.authService.getCurrentUser().pipe(
@@ -45,10 +50,20 @@ export class UserListComponent implements OnInit {
     this.authService.updateUserProfile({ role: newRole }).subscribe(
       () => {
         console.log(`User ${userId} role updated to ${newRole}`);
+        this.showSuccessMessage(`User ${userId} role updated to ${newRole}`);
       },
       error => {
         console.error('Error updating user role:', error);
+        this.showErrorMessage('Error updating user role: ' + error.message);
       }
     );
+  }
+
+  private showSuccessMessage(message: string) {
+    this.toastService.show(message, 'success');
+  }
+
+  private showErrorMessage(message: string) {
+    this.toastService.show(message, 'error');
   }
 }
