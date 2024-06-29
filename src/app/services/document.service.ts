@@ -16,7 +16,6 @@ export class DocumentService {
 
   getDocuments(): Observable<any[]> {
     return this.authService.getCurrentUser().pipe(
-      tap(user => console.log('Current user:', user)), // デバッグ: 現在のユーザー情報をログ出力
       switchMap(user => {
         if (user) {
           const pdfsCollection = collection(this.firestore, 'pdfs');
@@ -27,14 +26,9 @@ export class DocumentService {
             collectionData(userDocsQuery, { idField: 'id' }),
             collectionData(sharedDocsQuery, { idField: 'id' })
           ]).pipe(
-            tap(([userDocs, sharedDocs]) => {
-              console.log('User documents:', userDocs); // デバッグ: ユーザーのドキュメントをログ出力
-              console.log('Shared documents:', sharedDocs); // デバッグ: 共有ドキュメントをログ出力
-            }),
             map(([userDocs, sharedDocs]) => [...userDocs, ...sharedDocs])
           );
         } else {
-          console.log('No authenticated user'); // デバッグ: 認証されていない場合のログ
           return of([]);
         }
       }),
@@ -138,7 +132,6 @@ export class DocumentService {
         return from(updateDoc(documentRef, { tags: arrayUnion(tag) }));
       }),
       map(() => {
-        console.log(`Tag "${tag}" added successfully to document ${docId}`);
       }),
       catchError(error => {
         console.error('Error adding tag:', error);

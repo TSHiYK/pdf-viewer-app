@@ -1,17 +1,22 @@
 .document-list-container {
   display: flex;
-  height: calc(100vh - 60px);
-
+  height: calc(100vh - 60px - 2rem);
+  box-sizing: border-box;
+    .document-list {
+        border-right: 1px solid #ccc;
+      box-sizing: border-box;
+      margin: 0 1rem;
+    }
   &.overlay {
     .document-list {
-      width: 100%;
+      width: calc(100% - 2rem);
     }
   }
 
   &.split {
     .document-list {
-      width: 40%;
-      border-right: 1px solid #ccc;
+      width: calc(40% - 2rem);
+      
     }
     app-document-viewer {
       width: 60%;
@@ -22,13 +27,13 @@
 .document-list {
   overflow-y: auto;
   padding: 1rem;
-
   h2 {
     margin-bottom: 1rem;
   }
 
   input[type="text"] {
     width: 100%;
+    box-sizing: border-box;
     padding: 0.5rem;
     margin-bottom: 1rem;
   }
@@ -38,27 +43,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
-}
-
-.document-card {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 1rem;
-  background-color: #f9f9f9;
-
-  h3 {
-    margin-top: 0;
-    cursor: pointer;
-    &:hover {
-      color: #007bff;
-    }
-  }
-
-  p {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-    color: #666;
-  }
 }
 
 .tags {
@@ -121,4 +105,28 @@ button {
 app-upload {
   display: block;
   margin-bottom: 1rem;
+}
+
+.document-tree {
+  list-style-type: none;
+  padding-left: 0;
+    margin: 0;
+  ul {
+    list-style-type: none;
+    padding-left: 20px;
+  }
+
+  li {
+    margin: 5px 0;
+  }
+}
+
+button.view-toggle {
+    cursor: pointer;
+    font-size: 1.2em;
+    margin: 1rem 0 0.5rem;
+}
+
+.t-right {
+    text-align: right;
 }

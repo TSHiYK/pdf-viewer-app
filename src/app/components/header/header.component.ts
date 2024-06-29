@@ -26,9 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userSubscription = this.currentUser$.pipe(
-      tap(user => console.log('Current user:', user?.uid)),
-      switchMap(user => this.isAdmin$),
-      tap(isAdmin => console.log('Is admin:', isAdmin))
+      switchMap(user => this.isAdmin$)
     ).subscribe();
   }
 
@@ -41,7 +39,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   signOut(): void {
     this.authService.signOut().subscribe(
       () => {
-        console.log('User signed out successfully');
         this.router.navigate(['/sign-in']);
       },
       error => {

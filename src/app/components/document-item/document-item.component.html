@@ -1,0 +1,34 @@
+<div class="document-item">
+  <div class="item-header">
+    <span (click)="toggleChildren()" class="toggle-icon" *ngIf="document.children && document.children.length > 0">
+      {{ isExpanded ? '-' : '+' }}
+    </span>
+    <span class="document-icon" [ngClass]="{'folder-icon': document.children && document.children.length > 0, 'file-icon': !document.children || document.children.length === 0}"></span>
+    <h3 (click)="selectDocument.emit(document.fileUrl)">{{ document.name }}</h3>
+    <div class="tags">
+      <span *ngFor="let tag of document.tags" class="tag">{{ tag }}</span>
+    </div>
+    <span class="document-date">{{ convertTimestamp(document.uploadDate) | date }}</span>
+  </div>
+  <div class="actions">
+    <input type="text" placeholder="Add tag" #newTag />
+    <button (click)="addTag.emit({docId: document.id, tag: newTag.value}); newTag.value = ''">Add Tag</button>
+    <input type="text" placeholder="Share with UID" #shareInput />
+    <button (click)="shareDocument.emit({docId: document.id, uid: shareInput.value}); shareInput.value = ''">Share</button>
+    <button (click)="deleteDocument.emit(document.id)">Delete</button>
+  </div>
+  <ul *ngIf="isExpanded && document.children && document.children.length > 0">
+    <ng-container *ngFor="let child of document.children">
+      <li>
+        <app-document-item
+          [document]="child"
+          (selectDocument)="selectDocument.emit($event)"
+          (addTag)="addTag.emit($event)"
+          (removeTag)="removeTag.emit($event)"
+          (shareDocument)="shareDocument.emit($event)"
+          (deleteDocument)="deleteDocument.emit($event)">
+        </app-document-item>
+      </li>
+    </ng-container>
+  </ul>
+</div>

@@ -1,26 +1,46 @@
 <div class="document-list-container" [ngClass]="layoutMode">
   <div class="document-list">
-    <input type="text" placeholder="Search documents..." (input)="onSearch($event)" />
-    <app-upload (fileUploaded)="onFileUploaded($event)" (fileSelected)="onFileSelected($event)"></app-upload>
-    <div class="card-container">
-      <div *ngFor="let doc of filteredDocuments" class="document-card">
-        <div class="card-content">
-          <h3 (click)="onSelectDocument(doc.fileUrl)">{{ doc.name }}</h3>
-          <p>Size: {{ (doc.size / 1024 / 1024) | number: '1.2-2' }} MB</p>
-          <p>Uploaded on: {{ doc.uploadDate.toDate() | date }}</p>
-          <div class="tags">
-            <span *ngFor="let tag of doc.tags" class="tag">
-              {{ tag }} <button (click)="onRemoveTag(doc.id, tag)">x</button>
-            </span>
-          </div>
-          <input type="text" placeholder="Add tag" #tagInput />
-          <button (click)="onAddTag(doc.id, tagInput.value); tagInput.value = ''">Add Tag</button>
-          <input type="text" placeholder="Share with UID" #shareInput />
-          <button (click)="onShareDocument(doc.id, shareInput.value); shareInput.value = ''">Share</button>
-          <button (click)="onDeleteDocument(doc.id)">Delete</button>
+    <div class="top-bar">
+        <input type="text" placeholder="Search documents..." (input)="onSearch($event)" />
+        <app-upload (fileUploaded)="onFileUploaded($event)" (fileSelected)="onFileSelected($event)"></app-upload>
+        <div class="t-right">
+            <button (click)="toggleViewMode()" class="view-toggle">
+                <fa-icon [icon]="viewMode === 'tree' ? 'th' : 'list'"></fa-icon>
+            </button>
         </div>
-      </div>
     </div>
+
+    <ng-container *ngIf="viewMode === 'card'">
+      <div class="card-container">
+        <ng-container *ngFor="let doc of filteredTreeDocuments">
+          <app-document-card 
+            [document]="doc" 
+            (selectDocument)="onSelectDocument($event)"
+            (addTag)="onAddTag($event.docId, $event.tag)"
+            (removeTag)="onRemoveTag($event.docId, $event.tag)"
+            (shareDocument)="onShareDocument($event.docId, $event.uid)"
+            (deleteDocument)="onDeleteDocument($event)">
+          </app-document-card>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="viewMode === 'tree'">
+      <ul class="document-tree">
+        <ng-container *ngFor="let doc of filteredTreeDocuments">
+          <li>
+            <app-document-item 
+              [document]="doc"
+              (selectDocument)="onSelectDocument($event)"
+              (addTag)="onAddTag($event.docId, $event.tag)"
+              (removeTag)="onRemoveTag($event.docId, $event.tag)"
+              (shareDocument)="onShareDocument($event.docId, $event.uid)"
+              (deleteDocument)="onDeleteDocument($event)">
+            </app-document-item>
+          </li>
+        </ng-container>
+      </ul>
+    </ng-container>
   </div>
 
   <ng-container *ngIf="layoutMode === 'split' && selectedDocumentUrl">

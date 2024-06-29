@@ -1,0 +1,28 @@
+<div class="document-card">
+    <div class="card-content">
+        <h3 (click)="selectDocument.emit(document.fileUrl)">{{ document.name }}</h3>
+        <p>Size: {{ document.size / 1024 / 1024 | number: '1.2-2' }} MB</p>
+        <p>Uploaded on: {{ convertTimestamp(document.uploadDate) | date }}</p>
+        <div class="tags">
+            <span *ngFor="let tag of document.tags" class="tag">
+            {{ tag }} <button (click)="removeTag.emit({docId: document.id, tag: tag})">x</button>
+            </span>
+        </div>
+        <input type="text" placeholder="Add tag" #tagInput />
+        <button (click)="addTag.emit({docId: document.id, tag: tagInput.value}); tagInput.value = ''">Add Tag</button>
+        <input type="text" placeholder="Share with UID" #shareInput />
+        <button (click)="shareDocument.emit({docId: document.id, uid: shareInput.value}); shareInput.value = ''">Share</button>
+        <button (click)="deleteDocument.emit(document.id)">Delete</button>
+    </div>
+    <ng-container *ngIf="document.children && document.children.length > 0">
+        <app-document-card 
+            *ngFor="let childDoc of document.children"
+            [document]="childDoc"
+            (selectDocument)="selectDocument.emit($event)"
+            (addTag)="addTag.emit($event)"
+            (removeTag)="removeTag.emit($event)"
+            (shareDocument)="shareDocument.emit($event)"
+            (deleteDocument)="deleteDocument.emit($event)">
+        </app-document-card>
+    </ng-container>
+</div>
