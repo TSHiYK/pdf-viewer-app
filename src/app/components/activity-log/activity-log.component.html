@@ -1,0 +1,19 @@
+<div class="activity-log-container">
+  <h1>Activity Logs</h1>
+  <table class="activity-log-table">
+    <tr>
+      <th>User</th>
+      <th>Action</th>
+      <th>Details</th>
+      <th>Timestamp</th>
+    </tr>
+    <tr *ngFor="let log of logs$ | async">
+      <td>{{ log.userId }}</td>
+      <td>{{ log.action }}</td>
+      <td>
+        <ul><li *ngFor="let info of log.details | keyvalue">{{info.key}}: {{ info.value}}</li></ul>
+      </td>
+      <td>{{ log.timestamp.toDate() | date:'YYYY年M月dd日 HH:mm:ss' }}</td>
+    </tr>
+  </table>
+</div>

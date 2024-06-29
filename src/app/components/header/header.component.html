@@ -5,6 +5,7 @@
             <ng-container *ngIf="currentUser$ | async as user; else unauthenticatedLinks">
             <li><a routerLink="/edit-profile">Edit Profile</a></li>
             <li *ngIf="isAdmin$ | async"><a routerLink="/admin/users">User List</a></li>
+            <li *ngIf="isAdmin$ | async"><a routerLink="/admin/activity-log">Activity Log</a></li>
             <li><a (click)="signOut()">Sign Out</a></li>
             <li><span>Welcome, {{ user.displayName || user.email }}</span></li>
             </ng-container>
