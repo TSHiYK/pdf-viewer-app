@@ -3,12 +3,16 @@
   <p>Size: {{ document.size / 1024 / 1024 | number: '1.2-2' }} MB</p>
   <p>Uploaded on: {{ convertTimestamp(document.uploadDate) | date }}</p>
   <div class="tags">
-    <span *ngFor="let tag of document.tags" class="tag">{{ tag }}</span>
-  </div>
+      <span *ngFor="let tag of document.tags" class="tag">
+        {{ tag }}
+        <button (click)="removeTag.emit({docId: document.id, tag: tag})">×</button>
+      </span>
+    </div>
   <div class="actions">
-    <button (click)="addTag.emit({ docId: document.id, tag: 'New Tag' })">Add Tag</button>
-    <button (click)="removeTag.emit({ docId: document.id, tag: 'Tag to Remove' })">Remove Tag</button>
-    <button (click)="shareDocument.emit({ docId: document.id, uid: 'user-id' })">Share</button>
+    <input type="text" placeholder="Add tag" #newTag />
+    <button (click)="addTag.emit({docId: document.id, tag: newTag.value}); newTag.value = ''">Add Tag</button>
+    <input type="text" placeholder="Share with UID" #shareInput />
+    <button (click)="shareDocument.emit({docId: document.id, uid: shareInput.value}); shareInput.value = ''">Share</button>
     <button (click)="deleteDocument.emit(document.id)">Delete</button>
   </div>
 </div>

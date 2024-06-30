@@ -8,7 +8,6 @@
     <div class="tags" *ngIf="isFile(document) && document.tags">
       <span *ngFor="let tag of document.tags" class="tag">
         {{ tag }}
-        <button (click)="removeTag.emit({docId: document.id, tag: tag})">×</button>
       </span>
     </div>
     <span class="document-date" *ngIf="isFile(document) && document.uploadDate">{{ convertTimestamp(document.uploadDate) | date }}</span>

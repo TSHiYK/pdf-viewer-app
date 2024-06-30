@@ -143,24 +143,33 @@ export class DocumentListComponent implements OnInit {
 
   filterTree(items: BaseItem[], searchTerm: string): BaseItem[] {
     return items.reduce((acc: BaseItem[], item) => {
-      const matchesSearch = item.name.toLowerCase().includes(searchTerm);
+      const matchesSearch = item.name.toLowerCase().includes(searchTerm) ||
+        (this.isFile(item) && item.tags.some(tag => tag.toLowerCase().includes(searchTerm)));
 
-      if (this.isFolder(item)) {
-        const filteredChildren = this.filterTree(item.children || [], searchTerm);
-        if (matchesSearch || filteredChildren.length > 0) {
-          acc.push({
+      if (matchesSearch) {
+        if (this.isFolder(item)) {
+          const folder: Folder = {
+            ...item,
+            children: this.filterTree(item.children ?? [], searchTerm)
+          };
+          acc.push(folder);
+        } else {
+          acc.push(item);
+        }
+      } else if (this.isFolder(item) && item.children && item.children.length > 0) {
+        const filteredChildren = this.filterTree(item.children, searchTerm);
+        if (filteredChildren.length > 0) {
+          const folder: Folder = {
             ...item,
             children: filteredChildren
-          } as Folder);
+          };
+          acc.push(folder);
         }
-      } else if (this.isFile(item) && matchesSearch) {
-        acc.push(item);
       }
 
       return acc;
     }, []);
   }
-
 
   onFileUploaded(url: string) {
     this.showSuccessMessage('File uploaded successfully');
