@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StorageService } from '../../services/storage.service';
 import { DocumentService } from '../../services/document.service';
+import { BaseItem } from "../../models/base-item.model";
 
 @Component({
   selector: 'app-upload',
@@ -50,7 +51,7 @@ export class UploadComponent {
               size: fileSize,
               uploadDate: new Date()
             };
-            this.documentService.addDocument(document).subscribe({
+            this.documentService.addDocumentOrFolder(document as any).subscribe({
               next: () => {
                 this.fileUploaded.emit(progressOrUrl);
                 this.selectedFile = null;

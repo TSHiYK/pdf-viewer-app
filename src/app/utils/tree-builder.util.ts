@@ -1,27 +1,28 @@
-import { Document } from '../models/document.model';
+import { BaseItem } from '../models/base-item.model';
+import { Folder } from "../models/folder.model";
 
-export function buildTree(items: Document[]): Document[] {
-    const itemMap = new Map<string, Document>();
+export function buildTree(items: BaseItem[]): BaseItem[] {
+    const map = new Map<string, BaseItem>();
+    const roots: BaseItem[] = [];
 
-    // 各アイテムに children 配列を追加
     items.forEach(item => {
-        itemMap.set(item.id, { ...item, children: [] });
-    });
-
-    const rootItems: Document[] = [];
-
-    itemMap.forEach(item => {
-        if (item.parentId === null) {
-            rootItems.push(item);
+        map.set(item.id, item);
+        if (!item.parentId) {
+            roots.push(item);
         } else {
-            const parent = itemMap.get(item.parentId);
-            if (parent && parent.children) {
+            const parent = map.get(item.parentId);
+            if (parent && isFolder(parent)) {
+                if (!parent.children) {
+                    parent.children = [];
+                }
                 parent.children.push(item);
-            } else {
-                rootItems.push(item);
             }
         }
     });
 
-    return rootItems;
+    return roots;
+}
+
+function isFolder(item: BaseItem): item is Folder {
+    return item.type === 'folder';
 }

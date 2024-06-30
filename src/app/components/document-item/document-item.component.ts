@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { Document } from '../../models/document.model';
-
+import { BaseItem } from "../../models/base-item.model";
+import { File } from '../../models/file.model';
+import { Folder } from "../../models/folder.model";
 @Component({
   selector: 'app-document-item',
   standalone: true,
@@ -11,7 +12,7 @@ import { Document } from '../../models/document.model';
   providers: [DatePipe, DecimalPipe]
 })
 export class DocumentItemComponent {
-  @Input() document!: Document;
+  @Input() document!: BaseItem;
   @Output() selectDocument = new EventEmitter<string>();
   @Output() addTag = new EventEmitter<{ docId: string, tag: string }>();
   @Output() removeTag = new EventEmitter<{ docId: string, tag: string }>();
@@ -20,7 +21,7 @@ export class DocumentItemComponent {
 
   isExpanded: boolean = false;
 
-  constructor(private datePipe: DatePipe, private decimalPipe: DecimalPipe) { }
+  constructor(public datePipe: DatePipe, public decimalPipe: DecimalPipe) { }
 
   toggleChildren() {
     this.isExpanded = !this.isExpanded;
@@ -31,5 +32,13 @@ export class DocumentItemComponent {
       return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
     }
     return timestamp;
+  }
+
+  isFile(item: BaseItem): item is File {
+    return (item as File).fileUrl !== undefined;
+  }
+
+  isFolder(item: BaseItem): item is Folder {
+    return (item as Folder).children !== undefined;
   }
 }

@@ -4,6 +4,10 @@ import { Observable, from, of, combineLatest, tap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 import { switchMap, catchError, map } from 'rxjs/operators';
 import { ActivityLogService } from './activity-log.service';
+import { Folder } from '../models/folder.model';
+import { File } from '../models/file.model';
+import { BaseItem } from "../models/base-item.model";
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,7 +18,7 @@ export class DocumentService {
     private activityLogService: ActivityLogService
   ) { }
 
-  getDocuments(): Observable<any[]> {
+  getDocuments(): Observable<BaseItem[]> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {
         if (user) {
@@ -26,7 +30,17 @@ export class DocumentService {
             collectionData(userDocsQuery, { idField: 'id' }),
             collectionData(sharedDocsQuery, { idField: 'id' })
           ]).pipe(
-            map(([userDocs, sharedDocs]) => [...userDocs, ...sharedDocs])
+            map(([userDocs, sharedDocs]) => {
+              const userItems = userDocs.map(doc => ({
+                ...doc,
+                type: doc['type'] ? doc['type'] : 'file'
+              })) as BaseItem[];
+              const sharedItems = sharedDocs.map(doc => ({
+                ...doc,
+                type: doc['type'] ? doc['type'] : 'file'
+              })) as BaseItem[];
+              return [...userItems, ...sharedItems];
+            })
           );
         } else {
           return of([]);
@@ -39,21 +53,27 @@ export class DocumentService {
     );
   }
 
-  addDocument(document: { fileUrl: string, name: string, size: number, uploadDate: Date }): Observable<void> {
+  addDocumentOrFolder(documentOrFolder: File | Folder): Observable<void> {
     return this.authService.getCurrentUser().pipe(
       switchMap(user => {
         if (user) {
           const pdfsCollection = collection(this.firestore, 'pdfs');
-          const documentWithDateAndOwnerId = {
-            ...document,
-            uploadDate: Timestamp.fromDate(document.uploadDate),
-            ownerId: user.uid, // 修正: uid -> ownerId
-            sharedWith: [], // sharedWithを空の配列として初期化
-            tags: [] // tagsを空の配列として初期化
+          const itemWithOwnerId = {
+            ...documentOrFolder,
+            ownerId: user.uid,
+            uploadDate: 'uploadDate' in documentOrFolder ? Timestamp.fromDate(documentOrFolder.uploadDate) : undefined,
+            sharedWith: [],
+            tags: 'tags' in documentOrFolder ? documentOrFolder.tags : []
           };
-          return from(addDoc(pdfsCollection, documentWithDateAndOwnerId)).pipe(
+
+          // Remove undefined fields
+          if (itemWithOwnerId.uploadDate === undefined) {
+            delete itemWithOwnerId.uploadDate;
+          }
+
+          return from(addDoc(pdfsCollection, itemWithOwnerId)).pipe(
             switchMap(() => new Observable<void>(observer => {
-              this.activityLogService.addLog('Add document', documentWithDateAndOwnerId).subscribe();
+              this.activityLogService.addLog('Add document or folder', itemWithOwnerId).subscribe();
               observer.next();
               observer.complete();
             }))
@@ -63,8 +83,8 @@ export class DocumentService {
         }
       }),
       catchError(err => {
-        console.error('Error adding document:', err);
-        return of(); // エラーが発生した場合、空のObservableを返す
+        console.error('Error adding document or folder:', err);
+        return of();
       })
     );
   }
@@ -139,7 +159,6 @@ export class DocumentService {
       })
     );
   }
-
 
   removeTag(docId: string, tag: string): Observable<void> {
     const documentRef = doc(this.firestore, `pdfs/${docId}`);

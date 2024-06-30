@@ -121,12 +121,12 @@ app-upload {
   }
 }
 
-button.view-toggle {
-    cursor: pointer;
-    font-size: 1.2em;
-    margin: 1rem 0 0.5rem;
-}
+
 
 .t-right {
     text-align: right;
+    button {
+      margin-left: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
 }

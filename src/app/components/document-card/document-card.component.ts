@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { Document } from '../../models/document.model';
+import { File } from '../../models/file.model';
 
 @Component({
   selector: 'app-document-card',
@@ -11,12 +11,14 @@ import { Document } from '../../models/document.model';
   providers: [DatePipe, DecimalPipe]
 })
 export class DocumentCardComponent {
-  @Input() document!: Document;
+  @Input() document!: File;
   @Output() selectDocument = new EventEmitter<string>();
   @Output() addTag = new EventEmitter<{ docId: string, tag: string }>();
   @Output() removeTag = new EventEmitter<{ docId: string, tag: string }>();
   @Output() shareDocument = new EventEmitter<{ docId: string, uid: string }>();
   @Output() deleteDocument = new EventEmitter<string>();
+
+  constructor(private datePipe: DatePipe, private decimalPipe: DecimalPipe) { }
 
   convertTimestamp(timestamp: any): Date {
     if (timestamp && typeof timestamp.seconds === 'number' && typeof timestamp.nanoseconds === 'number') {

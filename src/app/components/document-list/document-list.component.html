@@ -4,7 +4,10 @@
         <input type="text" placeholder="Search documents..." (input)="onSearch($event)" />
         <app-upload (fileUploaded)="onFileUploaded($event)" (fileSelected)="onFileSelected($event)"></app-upload>
         <div class="t-right">
-            <button (click)="toggleViewMode()" class="view-toggle">
+            <button (click)="createFolder()" class="folder-create-button">
+                <fa-icon [icon]="['fas', 'folder-plus']"></fa-icon>
+            </button>
+            <button (click)="toggleViewMode()" class="view-toggle-button">
                 <fa-icon [icon]="viewMode === 'tree' ? 'th' : 'list'"></fa-icon>
             </button>
         </div>
@@ -13,14 +16,16 @@
     <ng-container *ngIf="viewMode === 'card'">
       <div class="card-container">
         <ng-container *ngFor="let doc of filteredTreeDocuments">
-          <app-document-card 
-            [document]="doc" 
-            (selectDocument)="onSelectDocument($event)"
-            (addTag)="onAddTag($event.docId, $event.tag)"
-            (removeTag)="onRemoveTag($event.docId, $event.tag)"
-            (shareDocument)="onShareDocument($event.docId, $event.uid)"
-            (deleteDocument)="onDeleteDocument($event)">
-          </app-document-card>
+          <ng-container *ngIf="isFile(doc)">
+            <app-document-card 
+              [document]="doc" 
+              (selectDocument)="onSelectDocument($event)"
+              (addTag)="onAddTag($event.docId, $event.tag)"
+              (removeTag)="onRemoveTag($event.docId, $event.tag)"
+              (shareDocument)="onShareDocument($event.docId, $event.uid)"
+              (deleteDocument)="onDeleteDocument($event)">
+            </app-document-card>
+          </ng-container>
         </ng-container>
       </div>
     </ng-container>
