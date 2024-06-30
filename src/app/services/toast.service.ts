@@ -39,7 +39,7 @@ export class ToastService {
     setTimeout(() => {
       this.removeToastComponent(toastComponentRef);
       this.displayNext();
-    }, toastItem.duration + 300); // 300ms はアニメーションの時間
+    }, toastItem.duration + 300);
   }
 
   private createToastComponent(toastItem: ToastItem): ComponentRef<ToastComponent> {
@@ -63,6 +63,6 @@ export class ToastService {
     setTimeout(() => {
       this.appRef.detachView(toastComponentRef.hostView);
       toastComponentRef.destroy();
-    }, 300); // アニメーションが完了するのを待つ
+    }, 300);
   }
 }
