@@ -1,7 +1,7 @@
 <header>
     <nav>
         <ul>
-            <li><a routerLink="/documents">Documents</a></li>
+            <li><a routerLink="/">Kakapo</a></li>
             <ng-container *ngIf="currentUser$ | async as user; else unauthenticatedLinks">
             <li><a routerLink="/edit-profile">Edit Profile</a></li>
             <li *ngIf="isAdmin$ | async"><a routerLink="/admin/users">User List</a></li>
