@@ -8,6 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "clean": "rimraf dist && rimraf tsconfig.tsbuildinfo",
     "test": "ng test",
+    "tree": "tree -L 5 -I 'node_modules' > project_structure.txt ",
     "serve:ssr:pdf-viewer-app": "node dist/pdf-viewer-app/server/server.mjs"
   },
   "private": true,
