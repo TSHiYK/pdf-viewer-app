@@ -12,6 +12,7 @@
       </span>
     </div>
     <span class="document-date" *ngIf="isFile(document) && document.uploadDate">{{ convertTimestamp(document.uploadDate) | date }}</span>
+    <fa-icon [icon]="['fas', 'trash']" class="delete-icon" (click)="onDeleteDocument(document)"></fa-icon>
   </div>
   <div class="actions" *ngIf="isFile(document)">
     <input type="text" placeholder="Add tag" #newTag />

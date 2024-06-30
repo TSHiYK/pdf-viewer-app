@@ -3,12 +3,14 @@ import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { BaseItem } from "../../models/base-item.model";
 import { File } from '../../models/file.model';
 import { Folder } from "../../models/folder.model";
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
 @Component({
   selector: 'app-document-item',
   standalone: true,
   templateUrl: './document-item.component.html',
   styleUrls: ['./document-item.component.scss'],
-  imports: [CommonModule, DatePipe, DecimalPipe],
+  imports: [CommonModule, DatePipe, DecimalPipe, FontAwesomeModule],
   providers: [DatePipe, DecimalPipe]
 })
 export class DocumentItemComponent {
@@ -32,6 +34,10 @@ export class DocumentItemComponent {
       return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
     }
     return timestamp;
+  }
+
+  onDeleteDocument(document: BaseItem) {
+    this.deleteDocument.emit(document.id);
   }
 
   isFile(item: BaseItem): item is File {

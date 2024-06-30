@@ -53,3 +53,11 @@ h3 {
     font-size: 0.8em;
   }
 }
+
+.delete-icon {
+  cursor: pointer;
+  margin-left: 0.5rem;
+  &:hover {
+    color: red;
+  }
+}

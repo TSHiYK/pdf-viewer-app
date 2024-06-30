@@ -197,7 +197,7 @@ export class DocumentListComponent implements OnInit {
 
   onDeleteDocument(docId: string) {
     const doc = this.findDocumentById(this.treeDocuments, docId);
-    if (this.isFile(doc)) {
+    if (doc && this.isFile(doc)) {
       this.storageService.deleteFile(doc.fileUrl).subscribe({
         next: () => {
           this.documentService.deleteDocument(docId).subscribe({
@@ -205,17 +205,32 @@ export class DocumentListComponent implements OnInit {
               this.removeDocumentFromTree(this.treeDocuments, docId);
               this.removeDocumentFromTree(this.filteredTreeDocuments, docId);
               this.documents = this.flattenTree(this.treeDocuments);
+              this.showSuccessMessage('Document deleted successfully.');
             },
             error: (error: any) => {
-              this.showErrorMessage('Delete failed: ' + error.message);
+              this.showErrorMessage('Error deleting document: ' + error.message);
             }
           });
-        }, error: (error: any) => {
-          this.showErrorMessage('Delete failed: ' + error.message);
+        },
+        error: (error: any) => {
+          this.showErrorMessage('Error deleting file: ' + error.message);
+        }
+      });
+    } else if (doc && doc.type === 'folder') {
+      this.documentService.deleteDocument(docId).subscribe({
+        next: () => {
+          this.removeDocumentFromTree(this.treeDocuments, docId);
+          this.removeDocumentFromTree(this.filteredTreeDocuments, docId);
+          this.documents = this.flattenTree(this.treeDocuments);
+          this.showSuccessMessage('Folder deleted successfully.');
+        },
+        error: (error: any) => {
+          this.showErrorMessage('Error deleting folder: ' + error.message);
         }
       });
     }
   }
+
 
   onAddTag(docId: string, tag: string) {
     this.documentService.addTag(docId, tag).subscribe({
