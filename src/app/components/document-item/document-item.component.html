@@ -3,7 +3,7 @@
     <span (click)="toggleChildren()" class="toggle-icon" *ngIf="isFolder(document) && document.children && document.children.length > 0">
       {{ isExpanded ? '-' : '+' }}
     </span>
-    <span class="document-icon" [ngClass]="{'folder-icon': isFolder(document), 'file-icon': isFile(document)}"></span>
+    <fa-icon [icon]="isFolder(document) ? 'folder' : 'file-pdf'" class="document-icon"></fa-icon>
     <h3 (click)="isFile(document) ? selectDocument.emit(document.fileUrl) : toggleChildren()">{{ document.name }}</h3>
     <div class="tags" *ngIf="isFile(document) && document.tags">
       <span *ngFor="let tag of document.tags" class="tag">

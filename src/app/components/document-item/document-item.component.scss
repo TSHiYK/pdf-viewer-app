@@ -11,12 +11,6 @@
 }
 .document-icon {
   margin-right: 10px;
-  &.folder-icon::before {
-    content: '📁';
-  }
-  &.file-icon::before {
-    content: '📄';
-  }
 }
 h3 {
   flex-grow: 1;
